@@ -15,16 +15,22 @@ int main(void)
     SetConfigFlags(FLAG_MSAA_4X_HINT);
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
     InitWindow(WINDOW_W, WINDOW_H, "raylib [core] example - basic window");
-    SetTargetFPS(60);
+    SetTargetFPS(120);
 
     while (!WindowShouldClose()) {
         int window_w = GetScreenWidth();
         int window_h = GetScreenHeight();
+        if (window_h<100) { window_h = 100;
+            SetWindowSize(window_w, window_h);
+        }
+        if (window_w<200) { window_w = 200;
+            SetWindowSize(window_w, window_h);
+        }
 
         int padding = window_w*PADDING;
         int u_raduis = window_w*UNIT_RADUIS;
-        if (u_raduis > (window_h-padding)/2)
-            u_raduis = (window_h-padding)/2;
+        if (u_raduis > window_h/2-padding)
+            u_raduis = window_h/2-padding;
         int spring_w = window_w*SPRING_W;
         int rect_h = u_raduis*2;
         int rect_w = window_w -(u_raduis*2+spring_w+padding*4);
@@ -32,7 +38,7 @@ int main(void)
         BeginDrawing();
         ClearBackground(COLOR(BG_COLOR));
         DrawCircle(padding+u_raduis, window_h/2, u_raduis, LIGHTGRAY);
-        DrawRectangleLines((padding+u_raduis)*2, padding, spring_w, window_h-2*padding, LIGHTGRAY);
+        DrawRectangleLines((padding+u_raduis)*2, window_h/2-rect_h/2-padding, spring_w, rect_h+2*padding, LIGHTGRAY);
         DrawRectangle(
                 u_raduis*2+spring_w+padding*3,
                 window_h/2-rect_h/2,
@@ -44,8 +50,3 @@ int main(void)
     CloseWindow();
     return 0;
 }
-
-
-/*
-    o | []
-*/
