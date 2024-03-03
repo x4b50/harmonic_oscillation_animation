@@ -12,38 +12,6 @@
 #define COLOR(c) *(Color*)&(c)
 int BG_COLOR = 0xFF181818;
 
-// TODO: changable amplitude and period
-/*
-    +-----------------------------+
-    |                             |
-    |                             |
-  1 |- - - - - - - - - - - - - - -|
-    |    .--^--.                  |
-    | .-/       \-.               |
-  0 |/-------------\-------------/|
-    |               `-\       /-` |
-    |                  `--v--`    |
- -1 |- - - - - - - - - - - - - - -|
-    |                             |
-    |                             |
-    +-----------------------------+
-                   |
-                   v
-    +-----------------------------+
-    |      -^-                    |
-    |    -/   \-                  |
-  1 |- -/- - - -\- - - - - - - - -|
-    |  /         \                |
-    | /           \               |
-  0 ||-------------|-------------||
-    |               \           / |
-    |                \         /  |
- -1 |- - - - - - - - -\- - - -/- -|
-    |                  -\   /-    |
-    |                    -v-      |
-    +-----------------------------+
-*/
-
 void _draw_vec(const int x, const int y, const int width, const int height, const double deg, const Color color, bool project) {
     if (height < width*2) return;
     Rectangle rec = {.x=x, .y=y, .width=width, .height=height-width*2.};
