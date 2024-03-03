@@ -108,14 +108,14 @@ int main(void) {
         DrawCircle(padding+u_raduis, window_h/2, u_raduis, LIGHTGRAY);
         DrawRectangle(padding, window_h/2-u_raduis/90, u_raduis*2, u_raduis/45, GRAY);
         DrawRectangle(padding+u_raduis-u_raduis/90, window_h/2-u_raduis, u_raduis/45, u_raduis*2, GRAY);
-        draw_unit_projections(padding+u_raduis, window_h/2, u_raduis/15, ampl*u_raduis, deg, BLUE, GREEN, RED);
+        draw_unit_projections(padding+u_raduis, window_h/2, u_raduis/15, u_raduis, deg, BLUE, GREEN, RED);
 
         // spring
         DrawRectangleLines(spring_x, spring_y, spring_w, spring_h, LIGHTGRAY);
         {
             float offset = (float)padding/(float)spring_h;
             #define DIF (spring_h-padding*2)/(float)n*((1+offset-ampl*sin(a_deg*PI/180./period))/(2+2*offset))
-            int n = 7;
+            int n = 9;
             int spring_mid = spring_x+spring_w/2;
             int px = spring_mid-spring_w/4;
             int py = spring_y+DIF;
