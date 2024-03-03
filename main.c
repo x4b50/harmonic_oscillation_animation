@@ -6,9 +6,43 @@
 #define UNIT_RADUIS 1/8
 #define PADDING 1/30
 #define SPRING_W 1/8
+#define SLIDERS_H 1/25
+#define SLIDERS_W PADDING/2
 
 #define COLOR(c) *(Color*)&(c)
 int BG_COLOR = 0xFF181818;
+
+// TODO: changable amplitude and period
+/*
+    +-----------------------------+
+    |                             |
+    |                             |
+  1 |- - - - - - - - - - - - - - -|
+    |    .--^--.                  |
+    | .-/       \-.               |
+  0 |/-------------\-------------/|
+    |               `-\       /-` |
+    |                  `--v--`    |
+ -1 |- - - - - - - - - - - - - - -|
+    |                             |
+    |                             |
+    +-----------------------------+
+                   |
+                   v
+    +-----------------------------+
+    |      -^-                    |
+    |    -/   \-                  |
+  1 |- -/- - - -\- - - - - - - - -|
+    |  /         \                |
+    | /           \               |
+  0 ||-------------|-------------||
+    |               \           / |
+    |                \         /  |
+ -1 |- - - - - - - - -\- - - -/- -|
+    |                  -\   /-    |
+    |                    -v-      |
+    +-----------------------------+
+*/
 
 void _draw_vec(const int x, const int y, const int width, const int height, const double deg, const Color color, bool project) {
     if (height < width*2) return;
@@ -25,7 +59,6 @@ void draw_unit_projections (
     const int x, const int y, const int width, const int height, const double deg,
     const Color color1, const Color color2, const Color color3
  ) {
-    _draw_vec(x, y, width, height, deg, color1, true);
     double d = -(deg+90)*PI/180;
     Vector2 v = {.x = x+cos(d)*height, .y = y+sin(d)*height};
 
@@ -40,6 +73,8 @@ void draw_unit_projections (
     _draw_vec(x, y, width/2, h1, d1, color1, true);
     _draw_vec(x, y, width/2, h2, d2, color2, true);
     _draw_vec(x, y, width/2, h1, d1-180, color3, true);
+    // main vector
+    _draw_vec(x, y, width, height, deg, color1, true);
 }
 
 void draw_anim_vecs(const int x, const int y, const int width, const int height, const double deg, const Color color) {
@@ -63,6 +98,8 @@ int main(void) {
     InitWindow(WINDOW_W, WINDOW_H, "raylib [core] example - basic window");
     SetTargetFPS(120);
 
+    double ampl = 0.5;
+    double period = 1;
     double time = 0;
     double a_deg = 0;
     double deg = 0;
@@ -77,10 +114,12 @@ int main(void) {
             SetWindowSize(window_w, window_h);
         }
 
+        int sliders_h = window_h*SLIDERS_H;
+        int sliders_w = window_h*SLIDERS_W;
         int padding = window_w*PADDING;
         int u_raduis = window_w*UNIT_RADUIS;
-        if (u_raduis > window_h/2-padding)
-            u_raduis = window_h/2-padding;
+        if (u_raduis > window_h/2-padding-sliders_h)
+            u_raduis = window_h/2-padding-sliders_h;
 
         int spring_w = window_w*SPRING_W;
         int spring_h = 2*(u_raduis+padding);
@@ -88,25 +127,27 @@ int main(void) {
         int spring_y = window_h/2-u_raduis-padding;
 
         int rect_h = u_raduis*2;
-        int rect_w = window_w -(u_raduis*2+spring_w+padding*4);
-        int rect_x0 = u_raduis*2+spring_w+padding*3;
+        int rect_x0 = u_raduis*2+spring_w+padding*3+sliders_w;
+        int rect_w = window_w -(rect_x0+padding);
 
         time += GetFrameTime()*180/PI;
         a_deg = fmod(time, 360.);
-        deg = a_deg-90;
+        deg = a_deg/period-90;
 
         BeginDrawing();
         ClearBackground(COLOR(BG_COLOR));
+        // unit circle
         DrawCircle(padding+u_raduis, window_h/2, u_raduis, LIGHTGRAY);
         DrawRectangle(padding, window_h/2-u_raduis/90, u_raduis*2, u_raduis/45, GRAY);
         DrawRectangle(padding+u_raduis-u_raduis/90, window_h/2-u_raduis, u_raduis/45, u_raduis*2, GRAY);
-        draw_unit_projections(padding+u_raduis, window_h/2, u_raduis/15, u_raduis, deg, BLUE, GREEN, RED);
+        draw_unit_projections(padding+u_raduis, window_h/2, u_raduis/15, ampl*u_raduis, deg, BLUE, GREEN, RED);
 
+        // spring
         DrawRectangleLines(spring_x, spring_y, spring_w, spring_h, LIGHTGRAY);
         {
             float offset = (float)padding/(float)spring_h;
-            #define DIF (spring_h-padding*2)/(float)n*((1+offset-sin(a_deg*PI/180.))/(2+2*offset))
-            int n = 6;
+            #define DIF (spring_h-padding*2)/(float)n*((1+offset-ampl*sin(a_deg*PI/180./period))/(2+2*offset))
+            int n = 7;
             int spring_mid = spring_x+spring_w/2;
             int px = spring_mid-spring_w/4;
             int py = spring_y+DIF;
@@ -119,30 +160,57 @@ int main(void) {
             }
             DrawLine(px, py+(n-1)*DIF, spring_mid, py+n*DIF, LIGHTGRAY);
             DrawRectangle(spring_mid-spring_w/4, py+n*DIF, spring_w/2, padding/2, LIGHTGRAY);
-            draw_anim_vecs(spring_mid, py+n*DIF+(float)padding/4, 10, u_raduis, deg+90., GREEN);
-            draw_anim_vecs(spring_mid, py+n*DIF+(float)padding/4, 10, u_raduis, deg-180., RED);
+            draw_anim_vecs(spring_mid, py+n*DIF+(float)padding/4, u_raduis/15, ampl*u_raduis*(1/period), deg+90., GREEN);
+            draw_anim_vecs(spring_mid, py+n*DIF+(float)padding/4, u_raduis/15, ampl*u_raduis*(1/period)*(1/period), deg-180., RED);
         }
 
-        DrawRectangle(
-                rect_x0,
-                window_h/2-rect_h/2,
-                rect_w, rect_h,
-                LIGHTGRAY);
+        // sin wave
+        DrawRectangle(rect_x0, window_h/2-rect_h/2, rect_w, rect_h, LIGHTGRAY);
         {
             int px = 0, py = 0;
             for (double i=1; i<=PI*200; i++) {
                 int x = i*rect_w/(PI*200);
-                int y = sin(i/100)*u_raduis;
-                DrawLine(rect_x0+px, window_h/2-py, rect_x0+x, window_h/2-y, GRAY);
+                int y = ampl*sin(i/100/period)*u_raduis;
+                DrawLine(rect_x0+px, window_h/2-py, rect_x0+x, window_h/2-y, BLACK);
                 px = x; py = y;
             }
         }
 
+        // moving dot
         int cx = rect_x0+(a_deg*rect_w/360);
-        int cy = window_h/2.-(sin(a_deg*PI/180.))*u_raduis;
-        DrawCircle(cx, cy, 15, BLUE);
-        draw_anim_vecs(cx, cy, 15, u_raduis, deg+90., GREEN);
-        draw_anim_vecs(cx, cy, 15, u_raduis, deg-180., RED);
+        int cy = window_h/2.-(ampl*sin(a_deg*PI/180./period))*u_raduis;
+        DrawCircle(cx, cy, u_raduis/15., BLUE);
+        draw_anim_vecs(cx, cy, u_raduis/15, ampl*u_raduis*(1/period), deg+90., GREEN);
+        draw_anim_vecs(cx, cy, u_raduis/15, ampl*u_raduis*(1/period)*(1/period), deg-180., RED);
+
+        // periods
+        int p_offs = rect_w*period;
+        while (p_offs<rect_w) {
+            DrawRectangle(rect_x0+p_offs-1, window_h/2-rect_h/2, 2, rect_h, BLACK);
+            p_offs += rect_w*period;
+        }
+
+        // sliders
+        // DrawRectangleLines(0, window_h-sliders_h, window_w, sliders_h, LIGHTGRAY);
+        DrawRectangle(rect_x0, (window_h+rect_h+padding)/2, rect_w, sliders_h/4, LIGHTGRAY);
+        DrawCircle(rect_x0+rect_w*period, (window_h+rect_h+padding+sliders_h/4)/2, u_raduis/20., BLUE);
+        int msx = GetMouseX();
+        int msy = GetMouseY();
+        if (IsMouseButtonDown(MOUSE_BUTTON_LEFT) && msx-rect_x0 > rect_w/4) {
+            period = ((float)(msx-rect_x0))/(float)rect_w;
+        }
+        if (IsMouseButtonDown(MOUSE_BUTTON_LEFT) && rect_x0+rect_w-msx < 0) {period = 1;}
+
+        DrawRectangle(rect_x0-padding/2-sliders_w, (window_h-rect_h)/2, sliders_w/2, u_raduis, LIGHTGRAY);
+        DrawCircle(rect_x0-padding/2-sliders_w+sliders_w/4, window_h/2.-ampl*u_raduis, u_raduis/20., BLUE);
+        if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)
+                && rect_x0-padding/2-sliders_w - msx < u_raduis/20
+                && rect_x0-padding/2+sliders_w - msx > u_raduis/20
+                && window_h/2 > msy && window_h/2-rect_h/2-u_raduis/5 < msy
+                ) {
+            ampl = (window_h/2.-msy)/u_raduis;
+            if (ampl > 1) {ampl=1;}
+        }
         EndDrawing();
     }
 
