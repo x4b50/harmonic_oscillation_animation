@@ -114,12 +114,13 @@ int main(void) {
             DrawLine(spring_mid, spring_y, px, py, LIGHTGRAY);
             for (int i=0; i<n-1; i++) {
                 int x = px + (1-2*(i%2))*spring_w/2;
-                int y = py + DIF;
-                DrawLine(px, py, x, y, LIGHTGRAY);
-                px = x; py = y;
+                DrawLine(px, py+i*DIF, x, py+(i+1)*DIF, LIGHTGRAY);
+                px = x;
             }
-            DrawLine(px, py, spring_mid, py+DIF, LIGHTGRAY);
-            DrawRectangle(spring_mid-spring_w/4, py+DIF, spring_w/2, padding/2, LIGHTGRAY);
+            DrawLine(px, py+(n-1)*DIF, spring_mid, py+n*DIF, LIGHTGRAY);
+            DrawRectangle(spring_mid-spring_w/4, py+n*DIF, spring_w/2, padding/2, LIGHTGRAY);
+            draw_anim_vecs(spring_mid, py+n*DIF+(float)padding/4, 10, u_raduis, deg+90., GREEN);
+            draw_anim_vecs(spring_mid, py+n*DIF+(float)padding/4, 10, u_raduis, deg-180., RED);
         }
 
         DrawRectangle(
