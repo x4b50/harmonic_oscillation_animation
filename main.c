@@ -63,6 +63,7 @@ int main(void) {
     InitWindow(WINDOW_W, WINDOW_H, "raylib [core] example - basic window");
     SetTargetFPS(120);
 
+    bool stopped = false;
     double ampl = 0.5;
     double period = 1;
     double time = 0;
@@ -78,6 +79,8 @@ int main(void) {
         if (window_w<200) { window_w = 200;
             SetWindowSize(window_w, window_h);
         }
+
+        if (IsKeyPressed(KEY_SPACE)) stopped = !stopped;
 
         int sliders_h = window_h*SLIDERS_H;
         int sliders_w = window_h*SLIDERS_W;
@@ -95,9 +98,11 @@ int main(void) {
         int rect_x0 = u_raduis*2+spring_w+padding*3+sliders_w;
         int rect_w = window_w -(rect_x0+padding);
 
-        time += GetFrameTime()*180/PI;
-        a_deg = fmod(time, 360.);
-        deg = a_deg/period-90;
+        if (!stopped) {
+            time += GetFrameTime()*180/PI;
+            a_deg = fmod(time, 360.);
+            deg = a_deg/period-90;
+        }
 
         BeginDrawing();
         ClearBackground(COLOR(BG_COLOR));
