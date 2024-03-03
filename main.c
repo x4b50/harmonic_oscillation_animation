@@ -104,6 +104,9 @@ int main(void) {
 
         BeginDrawing();
         ClearBackground(COLOR(BG_COLOR));
+        DrawText("amplituda predkosc przyspieszenie", padding/2, window_h/2-u_raduis-padding, padding/2, RED);
+        DrawText("amplituda predkosc", padding/2, window_h/2-u_raduis-padding, padding/2, GREEN);
+        DrawText("amplituda", padding/2, window_h/2-u_raduis-padding, padding/2, BLUE);
         // unit circle
         DrawCircle(padding+u_raduis, window_h/2, u_raduis, LIGHTGRAY);
         DrawRectangle(padding, window_h/2-u_raduis/90, u_raduis*2, u_raduis/45, GRAY);
@@ -127,7 +130,7 @@ int main(void) {
                 px = x;
             }
             DrawLine(px, py+(n-1)*DIF, spring_mid, py+n*DIF, LIGHTGRAY);
-            DrawRectangle(spring_mid-spring_w/4, py+n*DIF, spring_w/2, padding/2, LIGHTGRAY);
+            DrawRectangle(spring_mid-spring_w/4, py+n*DIF, spring_w/2, padding/2, BLUE);
             draw_anim_vecs(spring_mid, py+n*DIF+(float)padding/4, u_raduis/15, ampl*u_raduis*(1/period), deg+90., GREEN);
             draw_anim_vecs(spring_mid, py+n*DIF+(float)padding/4, u_raduis/15, ampl*u_raduis*(1/period)*(1/period), deg-180., RED);
         }
@@ -144,13 +147,6 @@ int main(void) {
             }
         }
 
-        // moving dot
-        int cx = rect_x0+(a_deg*rect_w/360);
-        int cy = window_h/2.-(ampl*sin(a_deg*PI/180./period))*u_raduis;
-        DrawCircle(cx, cy, u_raduis/15., BLUE);
-        draw_anim_vecs(cx, cy, u_raduis/15, ampl*u_raduis*(1/period), deg+90., GREEN);
-        draw_anim_vecs(cx, cy, u_raduis/15, ampl*u_raduis*(1/period)*(1/period), deg-180., RED);
-
         // periods
         int p_offs = rect_w*period;
         while (p_offs<rect_w) {
@@ -164,7 +160,7 @@ int main(void) {
         DrawCircle(rect_x0+rect_w*period, (window_h+rect_h+padding+sliders_h/4)/2, u_raduis/20., BLUE);
         int msx = GetMouseX();
         int msy = GetMouseY();
-        if (IsMouseButtonDown(MOUSE_BUTTON_LEFT) && msx-rect_x0 > rect_w/4) {
+        if (IsMouseButtonDown(MOUSE_BUTTON_LEFT) && msx-rect_x0 > rect_w/3) {
             period = ((float)(msx-rect_x0))/(float)rect_w;
         }
         if (IsMouseButtonDown(MOUSE_BUTTON_LEFT) && rect_x0+rect_w-msx < 0) {period = 1;}
@@ -179,6 +175,14 @@ int main(void) {
             ampl = (window_h/2.-msy)/u_raduis;
             if (ampl > 1) {ampl=1;}
         }
+
+        // moving dot
+        int cx = rect_x0+(a_deg*rect_w/360);
+        int cy = window_h/2.-(ampl*sin(a_deg*PI/180./period))*u_raduis;
+        DrawCircle(cx, cy, u_raduis/15., BLUE);
+        draw_anim_vecs(cx, cy, u_raduis/15, ampl*u_raduis*(1/period), deg+90., GREEN);
+        draw_anim_vecs(cx, cy, u_raduis/15, ampl*u_raduis*(1/period)*(1/period), deg-180., RED);
+
         EndDrawing();
     }
 
