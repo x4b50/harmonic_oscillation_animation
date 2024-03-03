@@ -48,9 +48,6 @@ void draw_unit_projections (
 void draw_anim_vecs(const int x, const int y, const int width, const int height, const double deg, const Color color) {
     double d = -(deg+90)*PI/180;
     Vector2 v1 = {.x = x+cos(d)*height, .y = y+sin(d)*height};
-    int lx;
-    if (v1.x>x) {lx=v1.x;}
-    else {lx = x+(x-v1.x);}
 
     if (v1.y-y > 0) {
         _draw_vec(x, y, width/2, v1.y-y, 180, color, false);
