@@ -7,7 +7,7 @@
 #define PADDING 1/30
 #define SPRING_W 1/8
 #define SLIDERS_H 1/25
-#define SLIDERS_W PADDING/2
+#define SLIDERS_W PADDING/3
 
 #define COLOR(c) *(Color*)&(c)
 int BG_COLOR = 0xFF181818;
@@ -71,6 +71,9 @@ int main(void) {
     double deg = 0;
 
     while (!WindowShouldClose()) {
+        if (IsKeyPressed(KEY_ESCAPE)) WindowShouldClose();
+        if (IsKeyPressed(KEY_SPACE)) stopped = !stopped;
+
         int window_w = GetScreenWidth();
         int window_h = GetScreenHeight();
         if (window_h<100) { window_h = 100;
@@ -79,8 +82,6 @@ int main(void) {
         if (window_w<200) { window_w = 200;
             SetWindowSize(window_w, window_h);
         }
-
-        if (IsKeyPressed(KEY_SPACE)) stopped = !stopped;
 
         int sliders_h = window_h*SLIDERS_H;
         int sliders_w = window_h*SLIDERS_W;
@@ -159,11 +160,11 @@ int main(void) {
         // sliders
         // DrawRectangleLines(0, window_h-sliders_h, window_w, sliders_h, LIGHTGRAY);
         DrawRectangle(rect_x0, (window_h+rect_h+padding)/2, rect_w, sliders_h/4, LIGHTGRAY);
-        DrawCircle(rect_x0+rect_w*period, (window_h+rect_h+padding+sliders_h/4)/2, u_raduis/20., BLUE);
+        DrawCircle(rect_x0+rect_w*period/2, (window_h+rect_h+padding+sliders_h/4)/2, u_raduis/20., BLUE);
         int msx = GetMouseX();
         int msy = GetMouseY();
-        if (IsMouseButtonDown(MOUSE_BUTTON_LEFT) && msx-rect_x0 > rect_w/3) {
-            period = ((float)(msx-rect_x0))/(float)rect_w;
+        if (IsMouseButtonDown(MOUSE_BUTTON_LEFT) && msx-rect_x0 > rect_w/4) {
+            period = ((float)(msx-rect_x0))/(float)rect_w*2;
         }
         if (IsMouseButtonDown(MOUSE_BUTTON_LEFT) && rect_x0+rect_w-msx < 0) {period = 1;}
 
