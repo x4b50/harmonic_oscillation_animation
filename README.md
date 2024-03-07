@@ -1,8 +1,7 @@
 # Building and running
 ```console
-./build.sh && ./main
+./build.sh release && ./main
 ```
 
 TODO:
-- [ ] cross compile to windows
-- [ ] change font
+- [x] cross compile to windows
