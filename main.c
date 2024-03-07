@@ -166,13 +166,13 @@ int main(void) {
         if (IsMouseButtonDown(MOUSE_BUTTON_LEFT) && msx-rect_x0 > rect_w/4) {
             period = ((float)(msx-rect_x0))/(float)rect_w*2;
         }
-        if (IsMouseButtonDown(MOUSE_BUTTON_LEFT) && rect_x0+rect_w-msx < 0) {period = 1;}
+        if (IsMouseButtonDown(MOUSE_BUTTON_LEFT) && rect_x0+rect_w-msx < 0) {period = 2;}
 
         DrawRectangle(rect_x0-padding/2-sliders_w, (window_h-rect_h)/2, sliders_w/2, u_raduis, LIGHTGRAY);
         DrawCircle(rect_x0-padding/2-sliders_w+sliders_w/4, window_h/2.-ampl*u_raduis, u_raduis/20., BLUE);
         if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)
-                && rect_x0-padding/2-sliders_w - msx < u_raduis/20
-                && rect_x0-padding/2+sliders_w - msx > u_raduis/20
+                && rect_x0-padding/2-sliders_w*2 - u_raduis/20 < msx
+                && rect_x0-padding/2+sliders_w + u_raduis/20 > msx
                 && window_h/2 > msy && window_h/2-rect_h/2-u_raduis/5 < msy
                 ) {
             ampl = (window_h/2.-msy)/u_raduis;
